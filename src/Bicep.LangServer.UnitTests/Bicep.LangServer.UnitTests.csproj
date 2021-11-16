@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
 
     <IsPackable>false</IsPackable>
   </PropertyGroup>
@@ -28,6 +28,10 @@
   <ItemGroup>
     <ProjectReference Include="..\Bicep.Core.Samples\Bicep.Core.Samples.csproj" />
     <ProjectReference Include="..\Bicep.LangServer\Bicep.LangServer.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="Microsoft.CodeAnalysis.BannedApiAnalyzers" Version="3.3.3" />
   </ItemGroup>
 
 </Project>

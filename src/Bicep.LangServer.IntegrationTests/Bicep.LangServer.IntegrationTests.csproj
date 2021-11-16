@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
 
     <IsPackable>false</IsPackable>
   </PropertyGroup>
@@ -28,6 +28,10 @@
     <!-- Path prefix: Completions/SnippetTemplates -->
     <EmbeddedResource Include="./Completions/SnippetTemplates/**/*.json" LogicalName="$([System.String]::new('Completions/SnippetTemplates/%(RecursiveDir)%(Filename)%(Extension)').Replace('\', '/'))" />
     <EmbeddedResource Include="./Completions/SnippetTemplates/**/*.bicep" LogicalName="$([System.String]::new('Completions/SnippetTemplates/%(RecursiveDir)%(Filename)%(Extension)').Replace('\', '/'))" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="Microsoft.CodeAnalysis.BannedApiAnalyzers" Version="3.3.3" />
   </ItemGroup>
 
 </Project>

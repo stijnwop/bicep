@@ -3,8 +3,12 @@
 
 using Azure.ResourceManager;
 using Bicep.Core.Configuration;
+using Bicep.Core.Extensions;
 using Bicep.Core.Registry.Auth;
 using Bicep.Core.Tracing;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 
 namespace Bicep.Core.Registry
 {
@@ -19,15 +23,31 @@ namespace Bicep.Core.Registry
 
         public ITemplateSpecRepository CreateRepository(RootConfiguration configuration, string subscriptionId)
         {
-            var options = new ArmClientOptions();
-            options.Diagnostics.ApplySharedResourceManagerSettings();
-            options.ApiVersions.SetApiVersion("templateSpecs", "2021-05-01");
-            options.Scope = configuration.Cloud.AuthenticationScope;
+            try
+            {
+                var options = new ArmClientOptions();
+                options.Diagnostics.ApplySharedResourceManagerSettings();
+                options.ApiVersions.SetApiVersion("templateSpecs", "2021-05-01");
+                options.Scope = configuration.Cloud.AuthenticationScope;
 
-            var credential = this.credentialFactory.CreateChain(configuration.Cloud.CredentialPrecedence, configuration.Cloud.ActiveDirectoryAuthorityUri);
-            var armClient = new ArmClient(subscriptionId, configuration.Cloud.ResourceManagerEndpointUri, credential, options);
+                var credential = this.credentialFactory.CreateChain(configuration.Cloud.CredentialPrecedence, configuration.Cloud.ActiveDirectoryAuthorityUri);
 
-            return new TemplateSpecRepository(armClient);
+                var armClient = new ArmClient(subscriptionId, configuration.Cloud.ResourceManagerEndpointUri, credential, options);
+
+                return new TemplateSpecRepository(armClient);
+            }
+            catch(ReflectionTypeLoadException exception)
+            {
+                Trace.WriteLine($"Loader exceptions ({exception.LoaderExceptions.Length}):");
+
+                foreach(var loaderException in exception.LoaderExceptions.WhereNotNull())
+                {
+                    Trace.WriteLine(loaderException.ToString());
+                    Trace.WriteLine("-----------------------------");
+                }
+
+                throw;
+            }
         }
     }
 }
